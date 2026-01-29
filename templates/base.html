@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ARIA SOC Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100">
+  <nav class="flex items-center justify-between px-8 py-4 bg-slate-900/80 backdrop-blur border-b border-slate-800">
+    <div class="flex items-center gap-2">
+      <span class="h-8 w-8 rounded-full bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-300 font-bold">A</span>
+      <span class="font-semibold text-lg tracking-wide">ARIA – Alert & Response Intelligence Agent</span>
+    </div>
+    <div class="flex items-center gap-4 text-sm">
+      <a href="/" class="hover:text-cyan-300">Home</a>
+      <a href="/pricing" class="hover:text-cyan-300">Subscription</a>
+      {% if user %}
+        <a href="/dashboard" class="hover:text-cyan-300">Dashboard</a>
+        {% if user.is_admin %}
+          <a href="/admin" class="hover:text-rose-300">Admin</a>
+        {% endif %}
+        <a href="/logout" class="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700">Logout</a>
+      {% else %}
+        <a href="/login" class="hover:text-cyan-300">Login</a>
+        <a href="/register" class="px-3 py-1 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold">Get Started</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main class="min-h-screen">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t border-slate-800 mt-8 py-4 text-center text-xs text-slate-400">
+    © {{ 2026 }} ARIA SOC Assistant • Built for modern SOC teams
+  </footer>
+</body>
+</html>

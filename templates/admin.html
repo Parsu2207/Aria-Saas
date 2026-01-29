@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-6 py-10">
+  <h2 class="text-2xl font-semibold mb-4">Admin Dashboard</h2>
+
+  <div class="grid lg:grid-cols-2 gap-6 mb-8">
+    <div class="border border-slate-800 rounded-lg p-4">
+      <h3 class="font-semibold mb-2">Users</h3>
+      <table class="w-full text-xs border border-slate-800">
+        <thead class="bg-slate-900">
+          <tr>
+            <th class="px-2 py-1 border-b border-slate-800 text-left">Email</th>
+            <th class="px-2 py-1 border-b border-slate-800 text-left">Plan</th>
+            <th class="px-2 py-1 border-b border-slate-800 text-left">Admin</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+            <tr class="border-b border-slate-800/80">
+              <td class="px-2 py-1">{{ u.email }}</td>
+              <td class="px-2 py-1">
+                {{ (u.subscription.tier if u.subscription else 'None') }}
+              </td>
+              <td class="px-2 py-1">{{ 'Yes' if u.is_admin else 'No' }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="border border-slate-800 rounded-lg p-4">
+      <h3 class="font-semibold mb-2">Subscription Overview</h3>
+      <canvas id="dailyChart" class="mb-4"></canvas>
+      <canvas id="monthlyChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+  const dailyData = {{ daily_data | tojson }};
+  const monthlyData = {{ monthly_data | tojson }};
+
+  const dc = document.getElementById('dailyChart');
+  if (dc) {
+    new Chart(dc, {
+      type: 'line',
+      data: {
+        labels: ['D-6','D-5','D-4','D-3','D-2','D-1','Today'],
+        datasets: [{
+          label: 'Daily subscriptions',
+          data: dailyData,
+          borderColor: 'rgb(34,211,238)',
+          backgroundColor: 'rgba(34,211,238,0.2)',
+        }]
+      }
+    });
+  }
+
+  const mc = document.getElementById('monthlyChart');
+  if (mc) {
+    new Chart(mc, {
+      type: 'bar',
+      data: {
+        labels: ['M-5','M-4','M-3','M-2','M-1','This month'],
+        datasets: [{
+          label: 'Monthly subscriptions',
+          data: monthlyData,
+          backgroundColor: 'rgba(249,115,22,0.6)',
+        }]
+      }
+    });
+  }
+</script>
+{% endblock %}

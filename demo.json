@@ -1,0 +1,29 @@
+[
+ {
+    "id": "INCDEMO-1",
+    "timestamp": "2025-12-01T02:10:00",
+    "severity": "critical",
+    "event_type": "brute_force",
+    "src_ip": "45.67.89.12",
+    "dst_ip": "10.0.0.10",
+    "user": "admin"
+  },
+  {
+    "id": "INCDEMO-2",
+    "timestamp": "2025-12-01T02:10:20",
+    "severity": "high",
+    "event_type": "login_failure",
+    "src_ip": "45.67.89.12",
+    "dst_ip": "10.0.0.10",
+    "user": "admin"
+  },
+  {
+    "id": "INCDEMO-3",
+    "timestamp": "2025-12-01T02:11:00",
+    "severity": "critical",
+    "event_type": "c2_beacon",
+    "src_ip": "10.0.0.10",
+    "dst_ip": "198.51.100.23",
+    "user": "admin"
+  }
+]

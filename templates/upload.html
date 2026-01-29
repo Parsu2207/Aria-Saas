@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-10">
+  <h2 class="text-2xl font-semibold mb-4">Upload Alert JSON</h2>
+
+  {% if error %}
+    <div class="mb-4 text-sm text-rose-300 bg-rose-950/40 border border-rose-700 rounded px-3 py-2">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="mb-6 space-y-3">
+    <div>
+      <label class="block text-sm mb-1">Alert file (.json)</label>
+      <input type="file" name="file" accept=".json,application/json"
+             class="w-full text-sm text-slate-300">
+    </div>
+    <button type="submit"
+            class="px-4 py-2 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold">
+      Process alerts
+    </button>
+  </form>
+
+  {% if processed %}
+    <div class="space-y-6">
+      <div>
+        <h3 class="font-semibold mb-2">Incidents</h3>
+        {% if incidents %}
+          <div class="space-y-2 text-xs bg-slate-950/60 border border-slate-800 rounded p-3">
+            {% for inc in incidents %}
+              <div class="border-b border-slate-800/60 pb-2 mb-2">
+                <p>ID: {{ inc.incidentid }}</p>
+                <p>Priority: {{ inc.prioritybucket }}</p>
+                <p>Alerts: {{ inc.alerts | length }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-sm text-slate-400">No incidents detected.</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-2">Scored Alerts</h3>
+        {% if scored_alerts %}
+          <div class="overflow-x-auto text-xs">
+            <table class="min-w-full border border-slate-800">
+              <thead class="bg-slate-900">
+                <tr>
+                  <th class="px-2 py-1 border-b border-slate-800 text-left">Alert ID</th>
+                  <th class="px-2 py-1 border-b border-slate-800 text-left">Priority</th>
+                  <th class="px-2 py-1 border-b border-slate-800 text-left">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in scored_alerts %}
+                  <tr class="border-b border-slate-800/80">
+                    <td class="px-2 py-1">{{ a.alertid }}</td>
+                    <td class="px-2 py-1">{{ a.prioritybucket }}</td>
+                    <td class="px-2 py-1">{{ a.priorityscore }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-sm text-slate-400">No alerts scored.</p>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
