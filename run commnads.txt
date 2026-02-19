@@ -1,0 +1,4 @@
+python run_backend.py
+ .\venv\Scripts\activate
+
+uvicorn saas_main:app --reload --port 8001
