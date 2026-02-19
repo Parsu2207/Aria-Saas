@@ -91,37 +91,53 @@ async def register_get(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
 
+@app.post("/register")# In saas_main.py, replace your existing register_post block with this:
+
 @app.post("/register")
 async def register_post(
     request: Request,
+    name: str = Form(...),
+    mobile: str = Form(...),
     email: str = Form(...),
     password: str = Form(...),
+    confirm_password: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    # Validate passwords match
+    if password != confirm_password:
+        return templates.TemplateResponse(
+            "register.html",
+            {"request": request, "error": "Passwords do not match"},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Check for existing user
     existing = db.query(User).filter(User.email == email).first()
     if existing:
         return templates.TemplateResponse(
             "register.html",
-            {
-                "request": request,
-                "error": "User already exists",
-            },
+            {"request": request, "error": "User already exists"},
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
-    user = User(email=email, hashed_password=hash_password(password))
+    # Create user with new fields
+    user = User(
+        name=name, 
+        mobile=mobile, 
+        email=email, 
+        hashed_password=hash_password(password)
+    )
     db.add(user)
     db.commit()
     db.refresh(user)
 
-    # default Free subscription
+    # Default Free subscription
     sub = Subscription(user_id=user.id, tier="Free")
     db.add(sub)
     db.commit()
 
     request.session["user_id"] = user.id
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
-
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_get(request: Request):
