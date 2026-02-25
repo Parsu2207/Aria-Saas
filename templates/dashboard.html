@@ -1,21 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
+
+{% if subscription and subscription.tier == 'Free' %}
+<div id="subscriptionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm transition-opacity">
+  <div class="bg-slate-900 border border-cyan-500/30 shadow-2xl shadow-cyan-500/10 rounded-xl p-8 max-w-md w-full text-center relative">
+    <h3 class="text-2xl font-bold text-slate-100 mb-2">Upgrade Your Plan</h3>
+    <p class="text-slate-400 text-sm mb-6">You are currently using the limited <span class="text-cyan-400 font-semibold">Free Tier</span>. Subscribe to a premium plan to unlock unlimited SOC processing.</p>
+    
+    <div class="flex flex-col gap-3">
+      <a href="/pricing" class="w-full py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold rounded transition">
+        View Premium Plans
+      </a>
+      <button onclick="document.getElementById('subscriptionModal').style.display='none'" class="w-full py-2 bg-transparent hover:bg-slate-800 text-slate-300 text-sm rounded transition border border-slate-700">
+        Continue on Free Tier
+      </button>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <div class="max-w-6xl mx-auto px-6 py-10">
-  <h2 class="text-2xl font-semibold mb-2">Welcome, {{ user.email }}</h2>
+  <h2 class="text-2xl font-semibold mb-2">Welcome, {{ user.name or user.email }}</h2>
 
   {% if subscription %}
-    <div class="mb-4 flex items-center justify-between">
+    <div class="mb-4 flex items-center justify-between bg-slate-900/50 p-4 border border-slate-800 rounded-lg">
       <div>
         <p class="text-sm text-slate-300">
           Current plan:
-          <span class="font-semibold">{{ subscription.tier }}</span>
+          <span class="font-bold {% if subscription.tier == 'Free' %}text-rose-400{% else %}text-cyan-400{% endif %}">
+            {{ subscription.tier }} Tier
+          </span>
         </p>
-        <p class="text-xs text-slate-400">
+        <p class="text-xs text-slate-400 mt-1">
           Expires on {{ subscription.end_date.strftime('%Y-%m-%d') if subscription.end_date else 'N/A' }}
         </p>
       </div>
       <div>
-        {% if days_remaining is not none %}
+        {% if subscription.tier == 'Free' %}
+          <a href="/pricing" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-xs text-white">
+            Upgrade Plan
+          </a>
+        {% elif days_remaining is not none %}
           <span class="px-3 py-1 rounded text-xs
             {% if warn_expiring %}
               bg-rose-950/60 text-rose-300 border border-rose-600

@@ -13,18 +13,25 @@
         </h1>
         <p class="text-slate-300 mb-6">
           ARIA is your SOC copilot that scores alerts, correlates incidents, and highlights what matters most so your team can respond faster.
-        </p>
+        </p>            
         <div class="flex flex-wrap gap-4 mb-6">
-          <a href="/register"
-             class="px-5 py-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold shadow-lg shadow-cyan-500/30">
-            Start free trial
-          </a>
+          {% if user %}
+            <a href="/dashboard"
+               class="px-5 py-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold shadow-lg shadow-cyan-500/30">
+              Go to Dashboard
+            </a>
+          {% else %}
+            <a href="/register"
+               class="px-5 py-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold shadow-lg shadow-cyan-500/30">
+              Start free trial
+            </a>
+          {% endif %}
           <a href="/pricing"
              class="px-5 py-3 rounded-lg border border-slate-700 hover:border-cyan-400 text-slate-200">
             View subscription plans
           </a>
         </div>
-        <ul class="space-y-2 text-slate-300 text-sm">
+          <ul class="space-y-2 text-slate-300 text-sm">
           <li>• Automated alert scoring & correlation</li>
           <li>• Incident timeline and SOC-ready context</li>
           <li>• Analyst-friendly dashboard optimized for real SOC workflows</li>

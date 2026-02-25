@@ -6,40 +6,50 @@
 
   <div class="grid md:grid-cols-3 gap-6 mb-10">
     {% set plans = [
-      {'name':'Free','price':'₹0','desc':'For quick demos and POCs','tier':'Free'},
-      {'name':'Pro','price':'₹1999/mo','desc':'For growing SOC teams','tier':'Pro'},
-      {'name':'Enterprise','price':'Contact sales','desc':'For 24x7 global SOCs','tier':'Enterprise'}
+    {'name':'Free','price':'₹0','desc':'For quick demos and POCs','tier':'Free'},
+    {'name':'Pro','price':'₹1999/mo','desc':'For growing SOC teams','tier':'Pro'},
+    {'name':'Enterprise','price':'Contact sales','desc':'For 24x7 global SOCs','tier':'Enterprise'}
     ] %}
     {% for p in plans %}
-      <div class="border border-slate-800 rounded-xl p-5 bg-slate-950/60">
-        <h3 class="font-semibold text-lg mb-1">{{ p.name }}</h3>
-        <p class="text-cyan-300 text-xl mb-1">{{ p.price }}</p>
-        <p class="text-xs text-slate-400 mb-4">{{ p.desc }}</p>
-        <ul class="text-xs text-slate-300 space-y-1 mb-4">
-          <li>• Alert scoring and incident grouping</li>
-          <li>• SOC dashboard access</li>
-          <li>• Simple REST API integration</li>
-        </ul>
-        {% if user %}
-          <form method="post" action="/pricing/subscribe" class="space-y-2">
-            <input type="hidden" name="tier" value="{{ p.tier }}">
-            <select name="payment_method"
-                    class="w-full px-2 py-1 rounded bg-slate-950 border border-slate-700 text-xs">
-              <option value="card">Card</option>
-              <option value="upi">UPI</option>
-            </select>
-            <button type="submit"
-                    class="w-full py-2 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-900 text-sm font-semibold">
-              Subscribe
-            </button>
-          </form>
-        {% else %}
-          <a href="/login"
-             class="inline-flex w-full justify-center py-2 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-900 text-sm font-semibold">
-            Login to subscribe
-          </a>
-        {% endif %}
-      </div>
+    <div class="border ...">
+      {% if user and user.subscription and user.subscription.tier == p.tier %}
+      <button disabled class="w-full py-2 rounded bg-slate-800 text-slate-500 ...">
+        Currently Active
+      </button>
+      {% else %}
+      <form method="post" action="/pricing/subscribe" class="space-y-2">
+        <input type="hidden" name="tier" value="{{ p.tier }}">
+      </form>
+      {% endif %}
+    </div>
+    <div class="border border-slate-800 rounded-xl p-5 bg-slate-950/60">
+      <h3 class="font-semibold text-lg mb-1">{{ p.name }}</h3>
+      <p class="text-cyan-300 text-xl mb-1">{{ p.price }}</p>
+      <p class="text-xs text-slate-400 mb-4">{{ p.desc }}</p>
+      <ul class="text-xs text-slate-300 space-y-1 mb-4">
+        <li>• Alert scoring and incident grouping</li>
+        <li>• SOC dashboard access</li>
+        <li>• Simple REST API integration</li>
+      </ul>
+      {% if user %}
+      <form method="post" action="/pricing/subscribe" class="space-y-2">
+        <input type="hidden" name="tier" value="{{ p.tier }}">
+        <select name="payment_method" class="w-full px-2 py-1 rounded bg-slate-950 border border-slate-700 text-xs">
+          <option>select</option>
+          <option value="upi">UPI</option>
+        </select>
+        <button type="submit"
+          class="w-full py-2 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-900 text-sm font-semibold">
+          Subscribe
+        </button>
+      </form>
+      {% else %}
+      <a href="/login"
+        class="inline-flex w-full justify-center py-2 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-900 text-sm font-semibold">
+        Login to subscribe
+      </a>
+      {% endif %}
+    </div>
     {% endfor %}
   </div>
 </div>

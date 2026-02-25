@@ -13,7 +13,7 @@ from .config import (
     JIRA_BASE_URL, JIRA_USER_EMAIL, JIRA_API_TOKEN, JIRA_PROJECT_KEY,
     SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, ALERT_EMAIL_TO,
 )
-"""
+
 def _create_jira_issue(incident: Incident) -> str:
     url = f"{JIRA_BASE_URL}/rest/api/3/issue"
     auth = (JIRA_USER_EMAIL, JIRA_API_TOKEN)
@@ -55,7 +55,7 @@ def _create_jira_issue(incident: Incident) -> str:
         raise
     data = resp.json()
     return data.get("key", "UNKNOWN")
-"""
+
 
 def _send_email(subject: str, body: str, to_addr: str) -> None:
     msg = EmailMessage()
@@ -69,7 +69,6 @@ def _send_email(subject: str, body: str, to_addr: str) -> None:
         s.login(SMTP_USER, SMTP_PASSWORD)
         s.send_message(msg)
 
-"""
 def execute_playbook(incident: Incident, playbook_id: str) -> Dict:
     actions: list[str] = []
 
@@ -100,8 +99,7 @@ def execute_playbook(incident: Incident, playbook_id: str) -> Dict:
         "actions": actions,
         "status": "success",
     }
-"""
- 
+ """
 def execute_playbook(incident: Incident, playbook_id: str) -> Dict:
     actions: list[str] = []
     
@@ -132,3 +130,4 @@ def execute_playbook(incident: Incident, playbook_id: str) -> Dict:
         "actions": actions,
         "status": "success",
     }
+"""

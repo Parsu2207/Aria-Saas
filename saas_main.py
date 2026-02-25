@@ -324,26 +324,77 @@ async def pricing(
         {"request": request, "user": user},
     )
 
+# saas_main.py additions/modifications
 
 @app.post("/pricing/subscribe")
 async def subscribe_post(
     request: Request,
     tier: str = Form(...),
-    payment_method: str = Form(...),  # card / upi
+    payment_method: str = Form(...),
     user: User = Depends(login_required),
     db: Session = Depends(get_db),
 ):
-    # Simple mock payment handling
+    # Requirement 2: Enterprise redirect
+    if tier == "Enterprise":
+        return RedirectResponse(url="/contact-us", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Requirement 3: Check if already subscribed to this tier
+    if user.subscription and user.subscription.tier == tier and user.subscription.end_date > datetime.utcnow():
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Requirement 1: Redirect to Payment Gateway
+    # In a real app, you'd generate a Stripe Checkout URL here.
+    return RedirectResponse(
+        url=f"/payment-gateway?tier={tier}&method={payment_method}", 
+        status_code=status.HTTP_303_SEE_OTHER
+    )
+
+@app.get("/payment-gateway", response_class=HTMLResponse)
+async def payment_gateway(request: Request, tier: str, method: str, user: User = Depends(login_required)):
+    return templates.TemplateResponse("payment_mock.html", {
+        "request": request, 
+        "tier": tier, 
+        "method": method
+    })
+
+@app.post("/payment/success")
+async def payment_success(
+    request: Request,
+    tier: str = Form(...),
+    user: User = Depends(login_required),
+    db: Session = Depends(get_db)
+):
     sub = user.subscription
     if not sub:
         sub = Subscription(user_id=user.id, tier=tier)
         db.add(sub)
     else:
         sub.tier = tier
-        # extend end_date by 30 days
-        from datetime import timedelta
-
+        sub.start_date = datetime.utcnow()
         sub.end_date = datetime.utcnow() + timedelta(days=30)
+    
     db.commit()
-
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+
+    @app.get("/contact-us", response_class=HTMLResponse)
+async def contact_get(request: Request, user: User = Depends(get_current_user)):
+    return templates.TemplateResponse("contact.html", {"request": request, "user": user})
+
+@app.post("/contact-us")
+async def contact_post(
+    request: Request,
+    name: str = Form(...),
+    email: str = Form(...),
+    volume: str = Form(...),
+    message: str = Form(...),
+    user: User = Depends(get_current_user)
+):
+    # Professional SaaS Tip: In production, send this to your CRM (HubSpot/Salesforce) 
+    # or email your sales team here.
+    print(f"Enterprise Inquiry: {name} ({email}) - Volume: {volume}")
+    
+    return templates.TemplateResponse("contact.html", {
+        "request": request, 
+        "user": user,
+        "success": "Your request has been sent! Our sales team will contact you within 24 hours."
+    })
